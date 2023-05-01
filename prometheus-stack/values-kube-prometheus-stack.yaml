@@ -38,10 +38,23 @@ prometheus:
     default:
       istio-extension-dashboard:
         json: |
-          ${indent(8, file("${path.module}/dashboards/istio-extension-dashboard.json"))}
+          ${indent(8, file("./dashboards/istio-extension-dashboard.json"))}
       istio-mesh-dashboard:
         json: |
-          ${indent(8, file("${path.module}/dashboards/istio-mesh-dashboard.json"))}
+          ${indent(8, file("./dashboards/istio-mesh-dashboard.json"))}
+      istio-performance-dashboard:
+        json: |
+          ${indent(8, file("./dashboards/istio-performance-dashboard.json"))}
+      istio-service-dashboard:
+        json: |
+          ${indent(8, file("./dashboards/istio-service-dashboard.json"))}
+      istio-workload-dashboard:
+        json: |
+          ${indent(8, file("./dashboards/istio-workload-dashboard.json"))}
+      pilot-dashboard:
+        json: |
+          ${indent(8, file("./dashboards/pilot-dashboard.json"))}
+
 
   prometheusSpec:
     externalLabels: {}  #Multi-Cluster에 Prometheus를 설치하는 경우 구분을 위한 레이블
