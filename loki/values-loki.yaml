@@ -26,4 +26,4 @@ loki:
     accessModes:
     - ReadWriteOnce
     size: 5Gi
-    storageClassName: managed-csi
+    storageClassName: azureblob-nfs-standard

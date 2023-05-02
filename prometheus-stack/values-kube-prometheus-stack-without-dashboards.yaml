@@ -1,0 +1,81 @@
+grafana:
+  service:
+    enabled: true
+    type: LoadBalancer
+    port: 80
+    targetPort: 3000
+    nodePort: 31030
+    portName: service
+
+prometheus:
+  thanosService:
+    enabled: false
+
+  service:
+    type: LoadBalancer
+
+  prometheusSpec:
+    externalLabels: {}  #Multi-Cluster에 Prometheus를 설치하는 경우 구분을 위한 레이블
+    replicaExternalLabelName: __replica__  #Thanos Query에서 replicas별로 확인하기 위해 #https://docs.aws.amazon.com/ko_kr/prometheus/latest/userguide/AMP-ingest-dedupe.html
+    retention: 10d
+    retentionSize: ""
+    replicas: 1
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: azureblob-nfs-standard
+          resources:
+            requests:
+              storage: 5Gi
+  
+  additionalServiceMonitors:
+  - name: "istio-component-monitor"
+    additionalLabels:
+      monitoring: istio-components
+      release: kube-prometheus-stack
+    jobLabel: "istio"
+    targetLabels: [app]
+    selector:
+      matchExpressions:
+      - {key: istio, operator: In, values: [pilot]}
+    namespaceSelector:
+      any: true
+    endpoints:
+      - port: http-monitoring
+        interval: 15s
+
+  additionalPodMonitors: 
+  - name: "envoy-stats-monitor"
+    additionalLabels:
+      monitoring: istio-proxies
+      release: kube-prometheus-stack
+    jobLabel: "envoy-stats"
+    selector:
+      matchExpressions:
+      - {key: istio-prometheus-ignore, operator: DoesNotExist}
+    sampleLimit: 0
+    namespaceSelector:
+      any: true
+    podMetricsEndpoints:
+    - path: /stats/prometheus
+      interval: 15s
+      relabelings:
+      - action: keep
+        sourceLabels: [__meta_kubernetes_pod_container_name]
+        regex: "istio-proxy"
+      - action: keep
+        sourceLabels: [__meta_kubernetes_pod_annotationpresent_prometheus_io_scrape]
+      - sourceLabels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        targetLabel: __address__
+      - action: labeldrop
+        regex: "__meta_kubernetes_pod_label_(.+)"
+      - sourceLabels: [__meta_kubernetes_namespace]
+        action: replace
+        targetLabel: namespace
+      - sourceLabels: [__meta_kubernetes_pod_name]
+        action: replace
+        targetLabel: pod_name
+
