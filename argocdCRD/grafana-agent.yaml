@@ -1,0 +1,12 @@
+project: default
+source:
+  repoURL: 'https://github.com/leelax22/argotest.git'
+  path: loki/grafana-agent-event
+  targetRevision: main
+destination:
+  server: 'https://kubernetes.default.svc'
+  namespace: monitoring
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true

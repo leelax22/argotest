@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki-stack
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/refresh: hard
+spec:
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - repoURL: https://github.com/leelax22/argotest.git
+    targetRevision: main
+    ref: myRepo
+  - repoURL: https://github.com/grafana/helm-charts.git
+    targetRevision: main
+    path: charts/loki-stack
+    helm:
+      valueFiles:
+        - $myRepo/loki/values-loki.yaml
+  destination:
+    name: ''
+    namespace: monitoring
+    server: 'https://kubernetes.default.svc'
