@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx
+  name: loki-proxy
+  namespace: monitoring
+spec:
+  containers:
+  - image: leelax22/nginxproxy:v1
+    name: loki-proxy
+    env:
+    - name: FORWARD_HOST
+      value: loki-stack-headless
+    - name: FORWARD_PORT
+      value: "3100"
+    - name: BASIC_USERNAME
+      value: zenith
+    - name: BASIC_PASSWORD
+      value: wpsltmqlqjS1@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: nginx
+  name: loki-proxy
+  namespace: monitoring
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: nginx
+  type: ClusterIP
