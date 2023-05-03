@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-istiod
+  namespace: istio-system
+  labels:
+    argocd.argoproj.io/refresh: hard
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - repoURL: https://github.com/leelax22/argotest.git
+    targetRevision: main
+    ref: myRepo
+  - repoURL: https://github.com/istio/istio.git
+    targetRevision: main
+    path: manifests/charts/gateway
+    helm:
+      valueFiles:
+        - $myRepo/istio/values-gateway.yaml
+  destination:
+    name: ''
+    namespace: istio-system
+    server: 'https://kubernetes.default.svc'
