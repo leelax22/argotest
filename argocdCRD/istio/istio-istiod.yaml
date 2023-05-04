@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: istio-istiod
-  namespace: istio-system
+  namespace: argocd
   labels:
     argocd.argoproj.io/refresh: hard
   annotations:
@@ -20,12 +20,20 @@ spec:
     targetRevision: main
     ref: myRepo
   - repoURL: https://github.com/istio/istio.git
-    targetRevision: main
-    path: manifests/charts/istiod-remote
+    targetRevision: master
+    path: manifests/charts/istio-discovery
     helm:
       valueFiles:
-        - $myRepo/istio/values-istio-istiod.yaml
+        - $myRepo/istio/values-istiod.yaml
   destination:
     name: ''
     namespace: istio-system
     server: 'https://kubernetes.default.svc'
+  # ignoreDifferences:
+  # - kind: ServiceAccount
+  #   jsonPointers:
+  #   - /metadata/labels
+  # - group: admissionregistration.k8s.io
+  #   kind: MutatingWebhookConfiguration
+  #   jsonPointers:
+  #   - /webhooks

@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: istio-base
-  namespace: istio-system
+  namespace: argocd
   labels:
     argocd.argoproj.io/refresh: hard
   annotations:
@@ -20,11 +20,11 @@ spec:
     targetRevision: main
     ref: myRepo
   - repoURL: https://github.com/istio/istio.git
-    targetRevision: main
+    targetRevision: master
     path: manifests/charts/base
     helm:
       valueFiles:
-        - $myRepo/istio/values-istio-base.yaml
+        - $myRepo/istio/values-base.yaml
   destination:
     name: ''
     namespace: istio-system

@@ -1,8 +1,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-istiod
-  namespace: istio-system
+  name: istio-gateway
+  namespace: argocd
   labels:
     argocd.argoproj.io/refresh: hard
   annotations:
@@ -20,12 +20,12 @@ spec:
     targetRevision: main
     ref: myRepo
   - repoURL: https://github.com/istio/istio.git
-    targetRevision: main
+    targetRevision: master
     path: manifests/charts/gateway
     helm:
       valueFiles:
         - $myRepo/istio/values-gateway.yaml
   destination:
     name: ''
-    namespace: istio-system
+    namespace: default
     server: 'https://kubernetes.default.svc'
