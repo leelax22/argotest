@@ -9,8 +9,8 @@ pilot:
   rollingMaxSurge: 100%
   rollingMaxUnavailable: 25%
 
-  hub: ""
-  tag: ""
+  hub: "docker.io/istio"
+  tag: "1.8.2"
   variant: ""
 
   # Can be a full hub/image:tag
