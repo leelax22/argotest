@@ -10,7 +10,7 @@ pilot:
   rollingMaxUnavailable: 25%
 
   hub: "docker.io/istio"
-  tag: "1.17"
+  tag: "1.17.0"
   variant: ""
 
   # Can be a full hub/image:tag
